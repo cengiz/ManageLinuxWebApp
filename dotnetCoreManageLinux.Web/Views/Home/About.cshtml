@@ -1,0 +1,176 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<p>Use this area to provide additional information.</p>
+
+@Html.Raw(ViewData["RESULT"])
+
+
+<form asp-action="About">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label>ConStr</label>
+        <input id="model" name="model" class="form-control" value="Server=127.0.0.1,1401;Database=Master;User Id=SA;Password=Xh555333*" />
+
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+
+</form>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3">
+
+            <div class="portlet-box portlet-gutter ui-buttons-col mb-30">
+                <div class="portlet-header flex-row flex d-flex align-items-center b-b">
+                    <div class="flex d-flex flex-column">
+                        <h3>Database</h3>
+                        <span class="portlet-subtitle">&nbsp;</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div id="tree"></div>
+                    <div id="statusLine">Fancytree Demo - Click any node!</div>
+                </div>
+            </div><!--portlet-->
+
+
+
+        </div>
+        <div class="col-lg-9">
+            <div class="portlet-box portlet-gutter ui-buttons-col mb-30">
+                <div class="portlet-header flex-row flex d-flex align-items-center b-b">
+                    <div class="flex d-flex flex-column">
+                        <h3>Database</h3>
+                        <span class="portlet-subtitle">&nbsp;</span>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+                            <li><a data-toggle="tab" href="#menu1">Menu 1</a></li>
+                            <li><a data-toggle="tab" href="#menu2">Menu 2</a></li>
+                            <li><a data-toggle="tab" href="#menu3">Menu 3</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane fade in active">
+                                <form asp-action="RunQuery"
+                                      data-ajax-begin="onBegin" data-ajax-complete="onComplete"
+                                      data-ajax-failure="onFailed" data-ajax-success="onSuccess"
+                                      data-ajax="true" data-ajax-method="POST">
+                                    <div class="form-group">
+                                        <textarea class="span6" rows="3" placeholder="SQL" id="txtSql" name="txtSql"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" value="RUN QUERY" class="btn btn-default" />
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="container">
+                                            <div class="row data-table">
+                                                <div id="runsqlResult"></div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="menu1" class="tab-pane fade">
+                                <h3>Menu 1</h3>
+                            </div>
+                            <div id="menu2" class="tab-pane fade">
+                                <h3>Menu 2</h3>
+                                <p>Sed ut perspiciatis unde omnis iste natus rem aperiam.</p>
+                            </div>
+                            <div id="menu3" class="tab-pane fade">
+                                <h3>Menu 3</h3>
+                                <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--portlet-->
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts
+    {
+
+
+
+<script>
+
+
+
+
+        $(function(){
+
+            $("#tree").fancytree({
+                checkbox: true,
+                selectMode: 3,
+                source: {
+                    url:
+                      '@Url.RouteUrl(new{ action= "getDbJson", controller="Home"})'
+                  },
+                lazyLoad: function (event, data) {
+                    var node = data.node;
+                    data.result = { url: '@Url.RouteUrl(new{ action= "getDbTablesJson", controller="Home"})', data: { key: node.key } };
+                },
+
+                activate: function (event, data) {
+                   // alert(data.node.key);
+                    $("#statusLine").text(event.type + ": " + data.node);
+                },
+                dblclick: function (event, data) {
+                    var node = data.node,
+                        targetType = data.targetType;
+                    //node.setSelected(!node.isSelected());
+                    //alert(data.node.key);
+                    $("#txtSql").val("SELECT * FROM " + data.node.parent.key + "." + data.node.title);
+                },
+                select: function (event, data) {
+                 //   alert(data);
+                    $("#statusLine").text(
+                        event.type + ": " + data.node.isSelected() + " " + data.node
+                    );
+                }
+            });
+        }); // end document ready
+
+
+
+        //RunQuery
+         var onBegin = function () {
+            //alert("onbegin");
+        };
+
+        var onComplete = function () {
+            //alert("complete");
+        };
+
+    var onSuccess = function (context) {
+        $("#runsqlResult").html(context.object);
+            var j2 = context.object;
+            var j3 = JSON.stringify(j2);
+        };
+
+        var onFailed = function (context) {
+            showErrorModal("Operation Failed", context.message);
+        };
+
+    </script>
+}
+

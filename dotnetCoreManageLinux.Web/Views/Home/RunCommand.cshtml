@@ -1,0 +1,26 @@
+﻿@model ShellCommandViewModel
+@{
+    ViewData["Title"] = "RunCommand";
+}
+
+<h2>RunCommand</h2>
+
+<form asp-action="RunCommand">
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="ShellCommand" class="control-label"></label>
+        <input asp-for="ShellCommand" class="form-control" />
+        <span asp-validation-for="ShellCommand" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default"  />
+    </div>
+
+</form>
+
+
+<h2>@ViewData["Command"]</h2>
+<h3>@ViewData["Result"]</h3>
